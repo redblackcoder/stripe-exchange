@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: exchange API
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: Item
+paths:
+  /items:
+    get:
+      tags: [Item]
+      operationId: listItems
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Item' }
+    post:
+      tags: [Item]
+      operationId: createItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Item' }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Item' }
+  /items/{id}:
+    get:
+      tags: [Item]
+      operationId: getItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Item' }
+        '404': { description: Not Found }
+    put:
+      tags: [Item]
+      operationId: updateItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Item' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Item' }
+        '404': { description: Not Found }
+    delete:
+      tags: [Item]
+      operationId: deleteItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '204': { description: No Content }
+        '404': { description: Not Found }
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        id: { type: integer, format: int64, readOnly: true }
+        name: { type: string }
+        description: { type: string }
+      required: [name]
