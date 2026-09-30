@@ -133,6 +133,10 @@ components:
         id: { type: string, readOnly: true }
         amount: { type: number, format: double }
         currency: { $ref: "#/components/schemas/Currency" }
+        date: { type: string, format: date }
+      required:
+        - amount
+        - currency
     Currency:
       type: string
       enum:
