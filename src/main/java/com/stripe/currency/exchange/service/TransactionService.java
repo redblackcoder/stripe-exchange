@@ -50,6 +50,10 @@ public class TransactionService {
     }
 
     private double convert(double amount, Currency from, Currency to) throws Exception {
+        if (from == to) {
+            return amount;
+        }
+
         Optional<Double> rateOp = exchangeRate.conversion(from, to);
         if (rateOp.isEmpty()) {
             throw new Exception("Cannot exhange rate between " + from.getValue() + " and " + to.getValue());

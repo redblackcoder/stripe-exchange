@@ -29,6 +29,13 @@ public class JsonClient {
         mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
+    JsonClient(String baseUrl, HttpClient client) {
+        this.client = client;
+        this.baseUrl = baseUrl;
+        requestTimeout = Duration.ofSeconds(10);
+        mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    }
+
     public <T> T get(String path, Map<String, String> params, Class<T> clazz) throws HttpException {
         var request = HttpRequest.newBuilder(URI.create(baseUrl + path + buildQueryParams(params)))
                 .timeout(requestTimeout)
