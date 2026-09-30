@@ -7,18 +7,56 @@ servers:
 tags:
   - name: Item
 paths:
-  /items:
+  /transactions:
     get:
-      tags: [Item]
-      operationId: listItems
+      tags: [Finance]
+      summary: List transactions in specified currency
+      description: >
+        List the transactions on the server in the given currency type.
+        Uses the latest conversion rate.
+      operationId: listTransactions
+      parameters:
+        - name: currency
+          in: query
+          description: currency code
+          schema:
+            $ref: "#/components/schemas/Currency"
+            default: USD
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
-                items: { $ref: '#/components/schemas/Item' }
+                items: { $ref: "#/components/schemas/Transaction" }
+    post:
+      tags: [Finance]
+      summary: Create a new transaction
+      description: >
+        Create a new transaction on the server given the amount and the currency type.
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transaction"
+      responses:
+        "201":
+          description: Created
+  /items:
+    get:
+      tags: [Item]
+      operationId: listItems
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Item" }
     post:
       tags: [Item]
       operationId: createItem
@@ -26,13 +64,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Item' }
+            schema: { $ref: "#/components/schemas/Item" }
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Item' }
+              schema: { $ref: "#/components/schemas/Item" }
   /items/{id}:
     get:
       tags: [Item]
@@ -43,12 +81,12 @@ paths:
           required: true
           schema: { type: integer, format: int64 }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Item' }
-        '404': { description: Not Found }
+              schema: { $ref: "#/components/schemas/Item" }
+        "404": { description: Not Found }
     put:
       tags: [Item]
       operationId: updateItem
@@ -61,14 +99,14 @@ paths:
         required: true
         content:
           application/json:
-            schema: { $ref: '#/components/schemas/Item' }
+            schema: { $ref: "#/components/schemas/Item" }
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Item' }
-        '404': { description: Not Found }
+              schema: { $ref: "#/components/schemas/Item" }
+        "404": { description: Not Found }
     delete:
       tags: [Item]
       operationId: deleteItem
@@ -78,8 +116,8 @@ paths:
           required: true
           schema: { type: integer, format: int64 }
       responses:
-        '204': { description: No Content }
-        '404': { description: Not Found }
+        "204": { description: No Content }
+        "404": { description: Not Found }
 components:
   schemas:
     Item:
@@ -89,3 +127,17 @@ components:
         name: { type: string }
         description: { type: string }
       required: [name]
+    Transaction:
+      type: object
+      properties:
+        id: { type: string, readOnly: true }
+        amount: { type: number, format: double }
+        currency: { $ref: "#/components/schemas/Currency" }
+    Currency:
+      type: string
+      enum:
+        - AUD
+        - CAD
+        - INR
+        - JPY
+        - USD
